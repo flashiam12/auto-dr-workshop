@@ -1,0 +1,256 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "panels": [
+    {
+      "id": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "type": "graph",
+      "title": "Number of Cluster Links",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "confluent_kafka_server_cluster_link_count",
+          "interval": "",
+          "legendFormat": "{{link_name}} - {{link_state}} - {{mode}}",
+          "refId": "A"
+        }
+      ],
+      "x-axis": true,
+      "y-axis": true,
+      "lines": true,
+      "fill": 1
+    },
+    {
+      "id": 2,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "type": "piechart",
+      "title": "Unavailable Cluster Links",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "confluent_kafka_server_cluster_link_count{link_state='unavailable'}",
+          "interval": "",
+          "legendFormat": "{{link_name}} - {{mode}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "type": "graph",
+      "title": "Number of Mirror Topics",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "confluent_kafka_server_cluster_link_mirror_topic_count",
+          "interval": "",
+          "legendFormat": "{{link_name}} - {{link_mirror_topic_state}}",
+          "refId": "A"
+        }
+      ],
+      "x-axis": true,
+      "y-axis": true,
+      "lines": true,
+      "fill": 1
+    },
+    {
+      "id": 4,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "type": "piechart",
+      "title": "Active Mirror Topics",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "confluent_kafka_server_cluster_link_mirror_topic_count{link_mirror_topic_state='Mirror'}",
+          "interval": "",
+          "legendFormat": "{{link_name}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      },
+      "type": "table",
+      "title": "Cluster Link Task States",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "confluent_kafka_server_cluster_link_task_count",
+          "interval": "",
+          "legendFormat": "{{link_name}} - {{link_task_name}} - {{link_task_state}} - {{link_task_reason}}",
+          "refId": "A"
+        }
+      ],
+      "columns": [
+        { "text": "Mode", "value": "label_values(confluent_kafka_server_cluster_link_task_count, mode)" },
+        { "text": "Link Name", "value": "label_values(confluent_kafka_server_cluster_link_task_count, link_name)" },
+        { "text": "Task Name", "value": "label_values(confluent_kafka_server_cluster_link_task_count, link_task_name)" },
+        { "text": "Task State", "value": "label_values(confluent_kafka_server_cluster_link_task_count, link_task_state)" },
+        { "text": "Task Reason", "value": "label_values(confluent_kafka_server_cluster_link_task_count, link_task_reason)" }
+      ]
+    },
+    {
+      "id": 6,
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 24
+      },
+      "type": "table",
+      "title": "Mirror Topic State Transition Errors",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "confluent_kafka_server_cluster_link_mirror_transition_in_error",
+          "interval": "",
+          "legendFormat": "{{link_name}} - {{link_mirror_topic_state}}",
+          "refId": "A"
+        }
+      ],
+      "columns": [
+        { "text": "Mode", "value": "label_values(confluent_kafka_server_cluster_link_mirror_transition_in_error, mode)" },
+        { "text": "Link Name", "value": "label_values(confluent_kafka_server_cluster_link_mirror_transition_in_error, link_name)" },
+        { "text": "Mirror Topic State", "value": "label_values(confluent_kafka_server_cluster_link_mirror_transition_in_error, link_mirror_topic_state)" }
+      ]
+    },
+    {
+      "id": 7,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 32
+      },
+      "type": "graph",
+      "title": "Destination Mirroring Throughput",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "confluent_kafka_server_cluster_link_destination_response_bytes",
+          "interval": "",
+          "legendFormat": "{{link_name}}",
+          "refId": "A"
+        }
+      ],
+      "x-axis": true,
+      "y-axis": true,
+      "lines": true,
+      "fill": 1
+    },
+    {
+      "id": 8,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 32
+      },
+      "type": "graph",
+      "title": "Source Mirroring Throughput",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "confluent_kafka_server_cluster_link_source_response_bytes",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "x-axis": true,
+      "y-axis": true,
+      "lines": true,
+      "fill": 1
+    },
+    {
+      "id": 9,
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 40
+      },
+      "type": "graph",
+      "title": "Mirror Topics Bytes",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "confluent_kafka_server_cluster_link_mirror_topic_bytes",
+          "interval": "",
+          "legendFormat": "{{topic}}",
+          "refId": "A"
+        }
+      ],
+      "x-axis": true,
+      "y-axis": true,
+      "lines": true,
+      "fill": 1
+    },
+    {
+      "id": 10,
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 48
+      },
+      "type": "graph",
+      "title": "Mirroring Lag",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "confluent_kafka_server_cluster_link_mirror_topic_offset_lag",
+          "interval": "",
+          "legendFormat": "{{topic}}",
+          "refId": "A"
+        }
+      ],
+      "x-axis": true,
+      "y-axis": true,
+      "lines": true,
+      "fill": 1
+    }
+  ],
+  "schemaVersion": 26,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "timezone": "browser",
+  "title": "Kafka Cluster Dashboard",
+  "uid": "kafka-cluster-dashboard",
+  "version": 1
+}

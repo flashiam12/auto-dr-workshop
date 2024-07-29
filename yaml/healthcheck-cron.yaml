@@ -1,0 +1,63 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: kafka-healthcheck
+  namespace: ${namespace}  # Replace with your namespace
+spec:
+  schedule: "*/1 * * * *"  # Cron schedule to run the job every 5 minutes, adjust as needed
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: kafka-healthcheck
+            image: ${image}  # Replace with your Docker image that contains the script
+            command: ["/bin/bash", "/app/healthcheck.sh"]  # Path to the script in the Docker image
+            env:
+            - name: CC_KAFKA_PRIMARY
+              valueFrom:
+                configMapKeyRef:
+                  name: ${kafka_config}
+                  key: primary-broker
+            - name: CC_KAFKA_SECONDARY
+              valueFrom:
+                configMapKeyRef:
+                  name: ${kafka_config}
+                  key: secondary-broker
+            - name: CC_HEALTHCHECK_TOPIC
+              valueFrom:
+                configMapKeyRef:
+                  name: ${kafka_config}
+                  key: healthcheck-topic
+            - name: FAILOVER_CONFIGMAP
+              valueFrom:
+                configMapKeyRef:
+                  name: ${kafka_config}
+                  key: failover-configmap
+            - name: FAILOVER_CONFIGMAP_NS
+              valueFrom:
+                configMapKeyRef:
+                  name: ${kafka_config}
+                  key: failover-configmap-namespace
+            volumeMounts:
+            - name: kafka-config-volume
+              mountPath: /app/config  # Directory where configuration files are mounted
+          volumes:
+          - name: kafka-config-volume
+            configMap:
+              name: ${kafka_config}  # ConfigMap containing the configuration files
+              items:
+              - key: producer-primary.properties
+                path: producer-primary.properties
+              - key: producer-secondary.properties
+                path: producer-secondary.properties
+              - key: consumer-primary.properties
+                path: consumer-primary.properties
+              - key: consumer-secondary.properties
+                path: consumer-secondary.properties
+          restartPolicy: OnFailure
+          tolerations:
+          - key: "arch"
+            operator: "Equal"
+            value: "arm64"
+            effect: "NoSchedule"

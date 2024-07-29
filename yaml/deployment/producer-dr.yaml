@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: secondary-producer
+  namespace: ${namespace}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: secondary-producer-client
+  template:
+    metadata:
+      labels:
+        app: secondary-producer-client
+    spec:
+      containers:
+        - name: producer-client
+          image: ${image}
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: ${env_config_map}  
+          command: ["python", "producer.py"]  
+          resources:
+            limits:
+              cpu: "0.5"  
+              memory: "512Mi"  
+            requests:
+              cpu: "0.125" 
+              memory: "128Mi"
+      tolerations:
+      - key: "arch"
+        operator: "Equal"
+        value: "arm64"
+        effect: "NoSchedule" 
+          

@@ -1,0 +1,9 @@
+secrets/
+*.tfstate
+.venv
+.terraform
+secrets/*
+*.hcl
+*.info
+*.tfvars
+*.backup
