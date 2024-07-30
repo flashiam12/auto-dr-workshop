@@ -21,13 +21,13 @@ kubectl port-forward services/grafana 3000:80 -n monitoring
 ```
 
 #### Steady Cluster metrics:
-![alt text](./examples/cluster-metrics.png)
+![alt text](./cluster-metrics.png)
 
 #### Steady Consumer Lag metrics: 
-![alt text](./examples/consumer-lag-offset.png)
+![alt text](./consumer-lag-offset.png)
 
 #### Steady Cluster link metrics
-![alt text](./examples/clusterlink-metrics.png)
+![alt text](./clusterlink-metrics.png)
 
 ### Initialize network disconnect into primary spoke network
 ```bash
