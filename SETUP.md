@@ -2,7 +2,7 @@
 
 <p>This project consists of necessary configs needed to setup the required resources to test the automation of kafka clients failover and failback on kubernetes (EKS) for a high availability setup, connected over kafka primary and secondary clusters. </p>
 
-### ![alt text](./examples/steady.png)
+### ![alt text](./steady.png)
 
 #### Components
 
@@ -160,13 +160,13 @@ terraform apply -target confluent_cluster_link.east-to-west -target confluent_cl
 ### PS: We have prefixed the mirror topics with west in primary and east in secondary, however both clusters are in the same regions, its just incidental and symbolic. 
 ```
 ##### Available Cluster Links -
-##### ![alt text](./examples/clusterlink.png)
+##### ![alt text](./clusterlink.png)
 
 ##### Primary Topics - 
-##### ![alt text](./examples/primary-topics.png)
+##### ![alt text](./primary-topics.png)
 
 ##### Secondary Topics - 
-##### ![alt text](./examples/secondary-topics.png)
+##### ![alt text](./secondary-topics.png)
 
 ####
 #### Step 3: Kubernetes Setup - EKS Setup, Docker Images and Kubernetes Workloads - Monitoring & Client
@@ -204,10 +204,10 @@ kubectl port-forward -n monitoring services/grafana 3000:3000
 <p>Navigate to dependencies/grafana/dashboards and add ccloud.json and clusterlink.json to grafana dashboard</p>
 
 ##### Confluent Cloud Dashboard - 
-##### ![alt text](./examples/ccloud-json.png)
+##### ![alt text](./ccloud-json.png)
 
 ##### Confluent Cloud Cluster Link Dashboard - 
-##### ![alt text](./examples/ccloud-clusterlink.png)
+##### ![alt text](./ccloud-clusterlink.png)
 
 #### Step 4: Runbook
 ##### [Runbook for DR Play](RUNBOOK.md)
