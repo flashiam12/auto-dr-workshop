@@ -1,6 +1,0 @@
-cc_cloud_api_key=<Confluent Cloud API Key>
-cc_cloud_api_secret=<Confluent Cloud API Secret>
-cc_env=<Confluent Cloud Environment>
-aws_key = <AWS API Key>
-aws_secret = <AWS API Secret>
-aws_region = <AWS Region to use for Kubernetes and its VPC - To be same as CC Cluster Region>
