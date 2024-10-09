@@ -16,13 +16,6 @@ data:
       - eks-console-dashboard-full-access-group
       - system:discovery
       - system:nodes
-      userarn: arn:aws:iam::829250931565:federated-user/AWSReservedSSO_nonprod-administrator_ff555b249eb304bc/sdubey@confluent.io
-      username: AWSReservedSSO_nonprod-administrator_ff555b249eb304bc/sdubey@confluent.io
-    - groups:
-      - system:masters
-      - eks-console-dashboard-full-access-group
-      - system:discovery
-      - system:nodes
-      userarn: arn:aws:iam::829250931565:user/checkride-team-4-terraform
-      username: checkride-team-4-terraform
+      userarn: "${current_aws_user_arn}"
+      username: "${current_aws_username}"
 

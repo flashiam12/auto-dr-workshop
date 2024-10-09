@@ -173,6 +173,7 @@ module "ec2_instance" {
     Environment = "dev"
     Owner = "Shiv"
     Team = "STS"
+    "aws_cleaner/stop/date" = "2024-09-02"
   }
 }
 
@@ -182,12 +183,12 @@ locals {
   eks_cluster_name = "centene-ha-workshop"
 }
 
-data "aws_eks_cluster_auth" "cluster" {
-  name = module.eks.cluster_name
-}
-data "aws_eks_cluster" "cluster" {
-  name = module.eks.cluster_name
-}
+# data "aws_eks_cluster_auth" "cluster" {
+#   name = module.eks.cluster_name
+# }
+# data "aws_eks_cluster" "cluster" {
+#   name = module.eks.cluster_name
+# }
 
 ##################################### AWS CLUSTER NODE POOL IAM ROLE BINDING #########################################
 
@@ -234,39 +235,41 @@ resource "aws_iam_role_policy_attachment" "ALBIngressEKSPolicyCustom" {
 
 ##################################### AWS CLUSTER AUTH CONFIG MAP #########################################
 
-data "kubectl_file_documents" "aws-auth-cm" {
-    content = templatefile("${path.module}/configs/aws-auth-cm.yaml", {
-      node_pool_role_arn = "${aws_iam_role.node.arn}"
-      }
-    )
-}
+# data "kubectl_file_documents" "aws-auth-cm" {
+#     content = templatefile("${path.module}/configs/aws-auth-cm.yaml", {
+#       node_pool_role_arn = "${aws_iam_role.node.arn}",
+#       current_aws_user_arn = "${data.aws_caller_identity.current.arn}"
+#       current_aws_username = "${data.aws_caller_identity.current.user_id}"
+#       }
+#     )
+# }
 
-resource "kubectl_manifest" "aws-auth" {
-  provider = kubectl.kubectl-aws
-  for_each  = data.kubectl_file_documents.aws-auth-cm.manifests
-  yaml_body = each.value
-  depends_on = [
-    module.eks,
-    aws_iam_role.node
-  ]
-}
+# resource "kubectl_manifest" "aws-auth" {
+#   provider = kubectl.kubectl-aws
+#   for_each  = data.kubectl_file_documents.aws-auth-cm.manifests
+#   yaml_body = each.value
+#   depends_on = [
+#     module.eks,
+#     aws_iam_role.node
+#   ]
+# }
 
 ##################################### AWS GP3 STORAGE CLASS #########################################
 
-data "kubectl_file_documents" "aws-ebs-gp3" {
-    content = templatefile("${path.module}/configs/ebs-gp3.yaml", {
-      k8s_aws_region = var.aws_region
-    })
-}
+# data "kubectl_file_documents" "aws-ebs-gp3" {
+#     content = templatefile("${path.module}/configs/ebs-gp3.yaml", {
+#       k8s_aws_region = var.aws_region
+#     })
+# }
 
-resource "kubectl_manifest" "aws-ebs" {
-  provider = kubectl.kubectl-aws
-  for_each  = data.kubectl_file_documents.aws-ebs-gp3.manifests
-  yaml_body = each.value
-  depends_on = [
-    module.eks
-  ]
-}
+# resource "kubectl_manifest" "aws-ebs" {
+#   provider = kubectl.kubectl-aws
+#   for_each  = data.kubectl_file_documents.aws-ebs-gp3.manifests
+#   yaml_body = each.value
+#   depends_on = [
+#     module.eks
+#   ]
+# }
 
 ##################################### AWS CLUSTER ENCRYPTION KEYS #########################################
 
@@ -278,120 +281,120 @@ resource "aws_kms_key" "eks" {
 
 ##################################### AWS CLUSTER EKS SETUP #########################################
 
-module "eks" {
-  source  = "terraform-aws-modules/eks/aws"
-  version = "~> 18.0"
-  cluster_name    = local.eks_cluster_name
-  cluster_version = "1.30"
-  subnet_ids = module.vpc.private_subnets
-  vpc_id = module.vpc.vpc_id
-  cluster_encryption_config = [
-    {
-        provider_key_arn = "${aws_kms_key.eks.arn}"
-        resources = ["secrets"]
-    }
-  ]
-}
+# module "eks" {
+#   source  = "terraform-aws-modules/eks/aws"
+#   version = "~> 18.0"
+#   cluster_name    = local.eks_cluster_name
+#   cluster_version = "1.30"
+#   subnet_ids = module.vpc.private_subnets
+#   vpc_id = module.vpc.vpc_id
+#   cluster_encryption_config = [
+#     {
+#         provider_key_arn = "${aws_kms_key.eks.arn}"
+#         resources = ["secrets"]
+#     }
+#   ]
+# }
 
 ##################################### AWS CLUSTER PLUGINS #########################################
 
-resource "aws_eks_addon" "csi-driver" {
-  cluster_name = module.eks.cluster_name
-  addon_name   = "aws-ebs-csi-driver"
-  resolve_conflicts_on_update = "PRESERVE"
-  depends_on = [ aws_eks_node_group.default-node-pool]
-}
+# resource "aws_eks_addon" "csi-driver" {
+#   cluster_name = module.eks.cluster_name
+#   addon_name   = "aws-ebs-csi-driver"
+#   resolve_conflicts_on_update = "PRESERVE"
+#   depends_on = [ aws_eks_node_group.default-node-pool]
+# }
 
-resource "aws_eks_addon" "vpc-cni" {
-  cluster_name = module.eks.cluster_name
-  addon_name   = "vpc-cni"
-  resolve_conflicts_on_update = "PRESERVE"
-}
+# resource "aws_eks_addon" "vpc-cni" {
+#   cluster_name = module.eks.cluster_name
+#   addon_name   = "vpc-cni"
+#   resolve_conflicts_on_update = "PRESERVE"
+# }
 
-resource "aws_eks_addon" "coredns" {
-  cluster_name = module.eks.cluster_name
-  addon_name   = "coredns"
-  resolve_conflicts_on_update = "PRESERVE"
-  depends_on = [ aws_eks_node_group.default-node-pool ]
-}
+# resource "aws_eks_addon" "coredns" {
+#   cluster_name = module.eks.cluster_name
+#   addon_name   = "coredns"
+#   resolve_conflicts_on_update = "PRESERVE"
+#   depends_on = [ aws_eks_node_group.default-node-pool ]
+# }
 
-resource "aws_eks_addon" "kube-proxy" {
-  cluster_name = module.eks.cluster_name
-  addon_name   = "kube-proxy"
-  resolve_conflicts_on_update = "PRESERVE"
-}
+# resource "aws_eks_addon" "kube-proxy" {
+#   cluster_name = module.eks.cluster_name
+#   addon_name   = "kube-proxy"
+#   resolve_conflicts_on_update = "PRESERVE"
+# }
 
 ##################################### AWS CLUSTER NODE POOLS #########################################
 
-resource "aws_eks_node_group" "default-node-pool" {
-  cluster_name    = module.eks.cluster_name
-  ami_type        = "AL2_x86_64"
-  version         = "1.30"
-  node_group_name = "${local.eks_cluster_name}-default-node-pool"
-  node_role_arn   = aws_iam_role.node.arn
-  subnet_ids      = module.vpc.public_subnets
-  disk_size       = 500
-  instance_types  = ["t3.large"]
-  scaling_config {
-    desired_size = 2
-    max_size     = 5
-    min_size     = 2
-  }
-  update_config {
-    max_unavailable = 1
-  }
-  remote_access {
-    ec2_ssh_key = aws_key_pair.bastion.key_name
-    source_security_group_ids = [module.vpc.default_security_group_id]
-  }
-  depends_on = [ 
-    aws_eks_addon.vpc-cni,
-    aws_eks_addon.kube-proxy
-  ]
-  tags = {
-    "cluster" = local.eks_cluster_name,
-    "pool" = "default",
-    "role" = "cluster_node"
-  }
-}
+# resource "aws_eks_node_group" "default-node-pool" {
+#   cluster_name    = module.eks.cluster_name
+#   ami_type        = "AL2_x86_64"
+#   version         = "1.30"
+#   node_group_name = "${local.eks_cluster_name}-default-node-pool"
+#   node_role_arn   = aws_iam_role.node.arn
+#   subnet_ids      = module.vpc.public_subnets
+#   disk_size       = 500
+#   instance_types  = ["t3.large"]
+#   scaling_config {
+#     desired_size = 2
+#     max_size     = 5
+#     min_size     = 2
+#   }
+#   update_config {
+#     max_unavailable = 1
+#   }
+#   remote_access {
+#     ec2_ssh_key = aws_key_pair.bastion.key_name
+#     source_security_group_ids = [module.vpc.default_security_group_id]
+#   }
+#   depends_on = [ 
+#     aws_eks_addon.vpc-cni,
+#     aws_eks_addon.kube-proxy
+#   ]
+#   tags = {
+#     "cluster" = local.eks_cluster_name,
+#     "pool" = "default",
+#     "role" = "cluster_node"
+#   }
+# }
 
-resource "aws_eks_node_group" "arm-default-node-pool" {
-  cluster_name    = module.eks.cluster_name
-  ami_type        = "AL2_ARM_64"
-  version         = "1.30"
-  node_group_name = "${local.eks_cluster_name}-arm-default-node-pool"
-  node_role_arn   = aws_iam_role.node.arn
-  subnet_ids      = module.vpc.public_subnets
-  disk_size       = 500
-  instance_types  = ["t4g.large"]
-  scaling_config {
-    desired_size = 4
-    max_size     = 5
-    min_size     = 2
-  }
-  update_config {
-    max_unavailable = 1
-  }
-  remote_access {
-    ec2_ssh_key = aws_key_pair.bastion.key_name
-    source_security_group_ids = [module.vpc.default_security_group_id]
-  }
-  depends_on = [ 
-    aws_eks_addon.vpc-cni,
-    aws_eks_addon.kube-proxy
-  ]
-  tags = {
-    "cluster" = local.eks_cluster_name,
-    "pool" = "arm-default",
-    "role" = "cluster_node"
-  }
-  taint {
-    key    = "arch"
-    value  = "arm64"
-    effect = "NO_SCHEDULE"  # or "NoExecute" based on your requirement
-  }
+# resource "aws_eks_node_group" "arm-default-node-pool" {
+#   cluster_name    = module.eks.cluster_name
+#   ami_type        = "AL2_ARM_64"
+#   version         = "1.30"
+#   node_group_name = "${local.eks_cluster_name}-arm-default-node-pool"
+#   node_role_arn   = aws_iam_role.node.arn
+#   subnet_ids      = module.vpc.public_subnets
+#   disk_size       = 500
+#   instance_types  = ["t4g.large"]
+#   scaling_config {
+#     desired_size = 4
+#     max_size     = 5
+#     min_size     = 2
+#   }
+#   update_config {
+#     max_unavailable = 1
+#   }
+#   remote_access {
+#     ec2_ssh_key = aws_key_pair.bastion.key_name
+#     source_security_group_ids = [module.vpc.default_security_group_id]
+#   }
+#   depends_on = [ 
+#     aws_eks_addon.vpc-cni,
+#     aws_eks_addon.kube-proxy
+#   ]
+#   tags = {
+#     "cluster" = local.eks_cluster_name,
+#     "pool" = "arm-default",
+#     "role" = "cluster_node"
+#   }
+#   taint {
+#     key    = "arch"
+#     value  = "arm64"
+#     effect = "NO_SCHEDULE"  # or "NoExecute" based on your requirement
+#   }
 
-}
+# }
 
 ##################################### AWS PUBLIC ECR #########################################
 provider "aws" {

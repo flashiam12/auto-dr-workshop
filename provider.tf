@@ -38,27 +38,27 @@ provider "aws" {
 }
 
 
-provider "kubectl" {
-  alias = "kubectl-aws"
-  host                   = data.aws_eks_cluster.cluster.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
-  token                  = data.aws_eks_cluster_auth.cluster.token
-  load_config_file       = true
-}
+# provider "kubectl" {
+#   alias = "kubectl-aws"
+#   host                   = data.aws_eks_cluster.cluster.endpoint
+#   cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
+#   token                  = data.aws_eks_cluster_auth.cluster.token
+#   load_config_file       = true
+# }
 
-provider "helm" {
-  kubernetes {
-    host                   = data.aws_eks_cluster.cluster.endpoint
-    cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
-    token                  = data.aws_eks_cluster_auth.cluster.token
-  }
-}
+# provider "helm" {
+#   kubernetes {
+#     host                   = data.aws_eks_cluster.cluster.endpoint
+#     cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
+#     token                  = data.aws_eks_cluster_auth.cluster.token
+#   }
+# }
 
 provider "kubernetes" {
   alias = "kubernetes-raw"
-  host                   = data.aws_eks_cluster.cluster.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
-  token                  = data.aws_eks_cluster_auth.cluster.token
+  # host                   = data.aws_eks_cluster.cluster.endpoint
+  # cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
+  # token                  = data.aws_eks_cluster_auth.cluster.token
 }
 
 provider "confluent" {
@@ -68,6 +68,7 @@ provider "confluent" {
 
 variable "cc_cloud_api_key" {}
 variable "cc_cloud_api_secret" {}
+variable "cc_env" {}
 variable "aws_key" {}
 variable "aws_secret" {}
 variable "aws_region" {}

@@ -3,10 +3,10 @@
 PRIMARY_BROKER=$CC_KAFKA_PRIMARY  # Replace with your primary Kafka broker address
 SECONDARY_BROKER=$CC_KAFKA_SECONDARY  # Replace with your secondary Kafka broker address
 
-PRIMARY_BROKER_PRODUCER_CONFIG=./config/producer-primary.properties
-SECONDARY_BROKER_PRODUCER_CONFIG=./config/producer-secondary.properties
-PRIMARY_BROKER_CONSUMER_CONFIG=./config/consumer-primary.properties
-SECONDARY_BROKER_CONSUMER_CONFIG=./config/consumer-secondary.properties
+PRIMARY_BROKER_PRODUCER_CONFIG=./healthcheck/config/producer-primary.properties
+SECONDARY_BROKER_PRODUCER_CONFIG=./healthcheck/config/producer-secondary.properties
+PRIMARY_BROKER_CONSUMER_CONFIG=./healthcheck/config/consumer-primary.properties
+SECONDARY_BROKER_CONSUMER_CONFIG=./healthcheck/config/consumer-secondary.properties
 
 TOPIC=$CC_HEALTHCHECK_TOPIC  # The topic used for availability check
 CONFIGMAP_NAME=$FAILOVER_CONFIGMAP  # ConfigMap name
@@ -18,10 +18,11 @@ check_kafka_broker() {
     PRODUCER_CONFIG=$3
     CONSUMER_CONFIG=$4
 
+    echo "Defining producer consumer"
     # Produce a test message and consume a test message in parallel
     PRODUCE_CMD="kafka-console-producer.sh --bootstrap-server $BROKER --topic $TOPIC --producer.config $PRODUCER_CONFIG <<< 'test-message'"
     CONSUME_CMD="kafka-console-consumer.sh --bootstrap-server $BROKER --topic $TOPIC --from-beginning --max-messages 1 --consumer.config $CONSUMER_CONFIG --timeout-ms 5000"
-
+    
     # Run the commands in parallel
     eval "$PRODUCE_CMD > /dev/null 2>&1" &
     PRODUCE_PID=$!
@@ -85,10 +86,11 @@ get_configmap_value() {
     fi
 }
 
-
+echo "Checking Kafka Broker Primary"
 check_kafka_broker $PRIMARY_BROKER $TOPIC $PRIMARY_BROKER_PRODUCER_CONFIG $PRIMARY_BROKER_CONSUMER_CONFIG
 PRIMARY_AVAILABLE=$?
 
+echo "Checking Kafka Broker Secondary"
 # Check secondary Kafka broker
 check_kafka_broker $SECONDARY_BROKER $TOPIC $SECONDARY_BROKER_PRODUCER_CONFIG $SECONDARY_BROKER_CONSUMER_CONFIG
 SECONDARY_AVAILABLE=$?

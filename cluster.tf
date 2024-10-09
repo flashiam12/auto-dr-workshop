@@ -4,7 +4,7 @@ resource "confluent_service_account" "default" {
 }
 
 data "confluent_environment" "default"{
-    id = "env-vrv23p"
+    id = var.cc_env
 }
 
 locals {
@@ -15,7 +15,7 @@ locals {
 resource "confluent_network" "primay-network-transit-gateway" {
   display_name     = "Primary Network For AWS Transit Gateway"
   cloud            = "AWS"
-  region           = "us-east-2"
+  region           = var.aws_region
   cidr             = local.cc_primary_network_cidr
   connection_types = ["TRANSITGATEWAY"]
   environment {
@@ -30,7 +30,7 @@ resource "confluent_network" "primay-network-transit-gateway" {
 resource "confluent_network" "secondary-network-transit-gateway" {
   display_name     = "Secondary Network For AWS Transit Gateway"
   cloud            = "AWS"
-  region           = "us-east-2"
+  region           = var.aws_region
   cidr             = local.cc_secondary_network_cidr
   connection_types = ["TRANSITGATEWAY"]
   environment {
@@ -84,15 +84,13 @@ resource "confluent_kafka_cluster" "primary" {
   display_name = "centene-primary"
   availability = "SINGLE_ZONE"
   cloud        = "AWS"
-  region       = "us-east-2"
+  region       = var.aws_region
   dedicated {
     cku = 2
   }
   network {
     id = confluent_network.primay-network-transit-gateway.id
   }
-
-
   environment {
     id = data.confluent_environment.default.id
   }
@@ -106,7 +104,7 @@ resource "confluent_kafka_cluster" "secondary" {
   display_name = "centene-secondary"
   availability = "SINGLE_ZONE"
   cloud        = "AWS"
-  region       = "us-east-2"
+  region       = var.aws_region
   dedicated {
     cku = 2
   }

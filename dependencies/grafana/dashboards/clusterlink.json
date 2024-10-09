@@ -161,7 +161,7 @@
         {
           "expr": "confluent_kafka_server_cluster_link_destination_response_bytes",
           "interval": "",
-          "legendFormat": "{{link_name}}",
+          "legendFormat": "",
           "refId": "A"
         }
       ],
